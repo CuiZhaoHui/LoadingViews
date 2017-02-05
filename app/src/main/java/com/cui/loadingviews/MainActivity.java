@@ -29,6 +29,6 @@ public class MainActivity extends Activity {
     }
 
     public void loadingFailed(View v){
-
+        view_main.loadingFailed();
     }
 }

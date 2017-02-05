@@ -1,5 +1,6 @@
 package com.cui.loadingviews.view;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -22,7 +23,7 @@ public class ZFBLoadingView extends View {
 
     private Paint mPaint;
     private Path currentPath;
-    private PathMeasure successPathMeasure;
+    private PathMeasure pathMeasure;
     private float[] mCurrentPosition = new float[2];
     /*圆的矩形外框*/
     private RectF ovalRect;
@@ -30,6 +31,12 @@ public class ZFBLoadingView extends View {
     private float mPadding = 20f;
     /*执行加载动画*/
     private boolean isLoading = false;
+    /*LoadingSuccess 对号*/
+    private Path successSymbolPath;
+    /*LoadingFailed  ×号*/
+    private Path failedSymbolPath1;
+    private Path failedSymbolPath2;
+
     private boolean isLoadingSuccess;
     private float startAngle = 0;
     private float sweepAngle = 0;
@@ -59,7 +66,9 @@ public class ZFBLoadingView extends View {
         ovalRect = new RectF();
         currentPath = new Path();
         successSymbolPath = new Path();
-        successPathMeasure = new PathMeasure();
+        failedSymbolPath1 = new Path();
+        failedSymbolPath2 = new Path();
+        pathMeasure = new PathMeasure();
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStrokeWidth(5);
@@ -81,7 +90,10 @@ public class ZFBLoadingView extends View {
                         sweepAngle = -sweepAngle;
                         invalidate();
                         if (!isLoading) {
-                            startSymbolAnim();
+                            if (isLoadingSuccess)
+                                startSuccessSymbolAnim();
+                            else
+                                startFailedSymbolAnim(true);
                             return;
                         }
                     }
@@ -92,7 +104,6 @@ public class ZFBLoadingView extends View {
         };
     }
 
-    private Path successSymbolPath;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -119,8 +130,8 @@ public class ZFBLoadingView extends View {
 
         //计算对号的Path
         successSymbolPath.reset();
-        mCurrentPosition[0] = ovalRect.left + sideLength * 0.24f;
-        mCurrentPosition[1] = ovalRect.top + sideLength * 0.47f;
+//        mCurrentPosition[0] = ovalRect.left + sideLength * 0.24f;
+//        mCurrentPosition[1] = ovalRect.top + sideLength * 0.47f;
         successSymbolPath.moveTo(ovalRect.left + sideLength * 0.24f
                 , ovalRect.top + sideLength * 0.47f);
 
@@ -130,13 +141,24 @@ public class ZFBLoadingView extends View {
         successSymbolPath.quadTo(ovalRect.left + sideLength * 0.44f, ovalRect.top + sideLength * 0.68f
                 , ovalRect.left + sideLength * 0.73f, ovalRect.top + sideLength * 0.35f);
 
-        successPathMeasure.setPath(successSymbolPath,false);
+        //计算X号Path
+        failedSymbolPath1.reset();
+        failedSymbolPath2.reset();
+        float padding = sideLength * 0.3f;
+        failedSymbolPath1.moveTo(ovalRect.left + padding, ovalRect.top + padding);
+        failedSymbolPath1.quadTo(ovalRect.left + padding, ovalRect.top + padding
+                , ovalRect.right - padding, ovalRect.bottom - padding);
+
+        failedSymbolPath2.moveTo(ovalRect.right - padding, ovalRect.top + padding);
+        failedSymbolPath2.quadTo(ovalRect.right - padding, ovalRect.top + padding
+                , ovalRect.left + padding, ovalRect.bottom - padding);
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawArc(ovalRect, startAngle, sweepAngle, false, mPaint);
-        if (!isLoading){
+        if (!isLoading) {
             canvas.drawPath(currentPath, mPaint);
         }
     }
@@ -153,15 +175,17 @@ public class ZFBLoadingView extends View {
     }
 
 
-    //开启结束动画
-    public void startSymbolAnim() {
+    /**
+     * 开始加载成功动画
+     */
+    private void startSuccessSymbolAnim() {
         currentPath.reset();
-        if (isLoadingSuccess){
-            successPathMeasure.getPosTan(0, mCurrentPosition, null);
-            currentPath.moveTo(mCurrentPosition[0],mCurrentPosition[1]);
-        }
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, successPathMeasure.getLength());
-        valueAnimator.setDuration(1000);
+        pathMeasure.setPath(successSymbolPath, false);
+        pathMeasure.getPosTan(0, mCurrentPosition, null);
+        currentPath.moveTo(mCurrentPosition[0], mCurrentPosition[1]);
+
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, pathMeasure.getLength());
+        valueAnimator.setDuration(500);
         // 减速插值器
         valueAnimator.setInterpolator(new DecelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -173,15 +197,65 @@ public class ZFBLoadingView extends View {
                 float value = (Float) animation.getAnimatedValue();
                 // 获取当前点坐标封装到mCurrentPosition
                 float[] tmp = mCurrentPosition;
-                successPathMeasure.getPosTan(value, mCurrentPosition, null);
-                currentPath.quadTo(tmp[0],tmp[1],mCurrentPosition[0],mCurrentPosition[1]);
+                pathMeasure.getPosTan(value, mCurrentPosition, null);
+                currentPath.quadTo(tmp[0], tmp[1], mCurrentPosition[0], mCurrentPosition[1]);
                 invalidate();
             }
         });
         valueAnimator.start();
     }
 
-    public void loadingFailed(){
+    /**
+     * 开始加载失败动画
+     */
+    private void startFailedSymbolAnim(final boolean isFirst) {
+        if (isFirst)
+            currentPath.reset();
+        pathMeasure.setPath(isFirst ? failedSymbolPath1 : failedSymbolPath2, false);
+        pathMeasure.getPosTan(0, mCurrentPosition, null);
+        currentPath.moveTo(mCurrentPosition[0], mCurrentPosition[1]);
+
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, pathMeasure.getLength());
+        valueAnimator.setDuration(200);
+        // 减速插值器
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                if (isLoading)
+                    return;
+                float value = (Float) animation.getAnimatedValue();
+                // 获取当前点坐标封装到mCurrentPosition
+                float[] tmp = mCurrentPosition;
+                pathMeasure.getPosTan(value, mCurrentPosition, null);
+                currentPath.quadTo(tmp[0], tmp[1], mCurrentPosition[0], mCurrentPosition[1]);
+                invalidate();
+            }
+        });
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (isFirst)
+                    startFailedSymbolAnim(false);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+            }
+        });
+
+        valueAnimator.start();
+    }
+
+    public void loadingFailed() {
         //TODO 加载失败
         isLoading = false;
         isLoadingSuccess = false;
@@ -189,8 +263,8 @@ public class ZFBLoadingView extends View {
 
     /**
      * 加载成功
-     * */
-    public void loadingComplete(){
+     */
+    public void loadingComplete() {
         isLoading = false;
         isLoadingSuccess = true;
     }
