@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="LoadingView">
+        <attr name="type" format="string"/>
+        <attr name="contentPadding" format="integer"/>
+
+        <!--NumberLoading-->
+        <attr name="lineColor" format="color"/>
+        <attr name="numberColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+
+
+
+    </declare-styleable>
+
+</resources>
