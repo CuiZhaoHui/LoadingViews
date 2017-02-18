@@ -3,6 +3,7 @@ package com.cui.loadingviews.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -17,6 +18,8 @@ import com.cui.loadingviews.util.LoadingViewFactory;
 public class LoadingView extends View implements InvalidateCallback {
 
     private Base mLoadingView;
+    private int contentPadding;
+    private String type;
 
     public LoadingView(Context context, String type) {
         super(context);
@@ -33,14 +36,17 @@ public class LoadingView extends View implements InvalidateCallback {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        if (isInEditMode())
-            return;
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LoadingView);
         String type = typedArray.getString(R.styleable.LoadingView_type);
-        int contentPadding = typedArray.getInt(R.styleable.LoadingView_contentPadding, 5);
-        mLoadingView = LoadingViewFactory.createLoadingView(type, typedArray);
-        mLoadingView.setContentPadding(contentPadding);
-        mLoadingView.setInvalidateCallback(this);
+        int contentPadding = (int) typedArray.getDimension(R.styleable.LoadingView_contentPadding, 5);
+        if (!isInEditMode()){
+            mLoadingView = LoadingViewFactory.createLoadingView(type, typedArray);
+            mLoadingView.setContentPadding(contentPadding);
+            mLoadingView.setInvalidateCallback(this);
+        }else{
+            this.type = type;
+            this.contentPadding = contentPadding;
+        }
         typedArray.recycle();
     }
 
@@ -60,6 +66,8 @@ public class LoadingView extends View implements InvalidateCallback {
     protected void onDraw(Canvas canvas) {
         if (!isInEditMode())
             mLoadingView.onDraw(canvas);
+        else
+            EditModeDrawer.drawEditMode(type,canvas,getWidth(),getHeight(),contentPadding, Color.GRAY);
     }
 
     public void startLoading() {
@@ -70,8 +78,8 @@ public class LoadingView extends View implements InvalidateCallback {
         mLoadingView.loadingComplete();
     }
 
-    public void loadingError() {
-        mLoadingView.loadingError();
+    public void loadingFailed() {
+        mLoadingView.loadingFailed();
     }
 
     @Override

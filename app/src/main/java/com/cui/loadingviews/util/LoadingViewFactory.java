@@ -15,16 +15,15 @@ import com.cui.loadingviews.view.NumberLoading;
 
 public class LoadingViewFactory {
 
-    private static final String ChaseLoading = "ChaseLoading";
-    private static final String NumberLoading = "NumberLoading";
+
 
     public static Base createLoadingView(String type, TypedArray typedArray) {
         if (typedArray == null)
             return new NumberLoading(Color.GRAY, Color.GRAY, 35);
         switch (type) {
-            case ChaseLoading:
+            case Base.ChaseLoading:
                 return new ChaseLoading();
-            case NumberLoading:
+            case Base.NumberLoading:
                 int lineColor = typedArray.getColor(R.styleable.LoadingView_lineColor, Color.GRAY);
                 int numberColor = typedArray.getColor(R.styleable.LoadingView_lineColor, Color.GRAY);
                 int textSize = typedArray.getDimensionPixelSize(R.styleable.LoadingView_textSize, 35);

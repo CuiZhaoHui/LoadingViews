@@ -11,6 +11,9 @@ import com.cui.loadingviews.callback.InvalidateCallback;
  * Base
  */
 public abstract class Base {
+    public static final String ChaseLoading = "ChaseLoading";
+    public static final String NumberLoading = "NumberLoading";
+
     static final int LOAD_COMPLETE = 1;
     static final int LOAD_ERROR = 2;
     static final int LOADING = 3;
@@ -26,13 +29,11 @@ public abstract class Base {
 
     public abstract void onDraw(Canvas canvas);
 
-    public abstract void drawEditMode(Canvas canvas);
-
     public abstract void startLoading();
 
     public abstract void loadingComplete();
 
-    public abstract void loadingError();
+    public abstract void loadingFailed();
 
     public Paint getPaint(int color,Paint.Style style){
         Paint p = new Paint();

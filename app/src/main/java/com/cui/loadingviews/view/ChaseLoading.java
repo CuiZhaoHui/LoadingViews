@@ -22,11 +22,6 @@ public class ChaseLoading extends Base {
     }
 
     @Override
-    public void drawEditMode(Canvas canvas) {
-
-    }
-
-    @Override
     public void startLoading() {
 
     }
@@ -37,7 +32,8 @@ public class ChaseLoading extends Base {
     }
 
     @Override
-    public void loadingError() {
+    public void loadingFailed() {
 
     }
+
 }

@@ -40,8 +40,10 @@
 
     <com.cui.loadingviews.view.LoadingView
         android:id="@+id/loadingView_main"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        app:contentPadding="18dp"
         app:type="NumberLoading"
         />
 </LinearLayout>
