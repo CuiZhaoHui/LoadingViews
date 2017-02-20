@@ -30,12 +30,13 @@
         android:onClick="loadingFailed"
         />
 
-    <com.cui.loadingviews.view.ZFBLoadingView
+    <com.cui.loadingviews.view.LoadingView
         android:id="@+id/view_main"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
+        app:type="ChaseLoading"
         />
 
     <com.cui.loadingviews.view.LoadingView

@@ -5,33 +5,32 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.cui.loadingviews.view.LoadingView;
-import com.cui.loadingviews.view.ZFBLoadingView;
 
 public class MainActivity extends Activity {
 
-    private ZFBLoadingView view_main;
+    LoadingView chaseLoading;
     LoadingView loadingView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        view_main = (ZFBLoadingView) findViewById(R.id.view_main);
+        chaseLoading = (LoadingView) findViewById(R.id.view_main);
         loadingView = (LoadingView) findViewById(R.id.loadingView_main);
     }
 
     public void startLoading(View v){
         loadingView.startLoading();
-        view_main.startLoading();
-//        view_main.startSymbolAnim();
+        chaseLoading.startLoading();
     }
 
     public void loadingSuccess(View v){
-        view_main.loadingComplete();
+        chaseLoading.loadingComplete();
+        loadingView.loadingComplete();
     }
 
     public void loadingFailed(View v){
-        view_main.loadingFailed();
+        chaseLoading.loadingFailed();
         loadingView.loadingFailed();
     }
 }

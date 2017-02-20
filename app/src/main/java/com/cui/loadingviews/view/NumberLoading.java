@@ -8,6 +8,8 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
 
+import com.cui.loadingviews.util.ComputeUtil;
+
 /**
  * Created by CZH on 2017/2/16.
  * NumberLoading
@@ -36,52 +38,28 @@ public class NumberLoading extends Base {
 
     @Override
     public void setUp(int width, int height) {
-        pathMeasure = new PathMeasure();
-        contentRect = new RectF();
-        currentPath = new Path();
-        int sideLength;//矩形边长
-        if (width < height) {
-            sideLength = width - contentPadding * 2;
-            contentRect.left = contentPadding;
-            contentRect.top = (height - sideLength) / 2;
-        } else if (width > height) {
-            sideLength = height - contentPadding * 2;
-            contentRect.left = (width - sideLength) / 2;
-            contentRect.top = contentPadding;
-        } else {
-            sideLength = width - contentPadding * 2;
-            contentRect.left = contentPadding;
-            contentRect.top = contentPadding;
-        }
-        contentRect.right = sideLength + contentRect.left;
-        contentRect.bottom = contentRect.top + sideLength;
+        if (pathMeasure == null)
+            pathMeasure = new PathMeasure();
+        if (contentRect == null)
+            contentRect = new RectF();
+        if (currentPath == null)
+            currentPath = new Path();
+
+        //矩形边长
+        int sideLength = ComputeUtil.ComputeSize(contentRect, width, height, contentPadding);
 
         //计算对号的Path
         successSymbolPath.reset();
-
-        successSymbolPath.moveTo(contentRect.left + sideLength * 0.24f
-                , contentRect.top + sideLength * 0.47f);
-
-        successSymbolPath.quadTo(contentRect.left + sideLength * 0.24f, contentRect.top + sideLength * 0.47f
-                , contentRect.left + sideLength * 0.44f, contentRect.top + sideLength * 0.68f);
-
-        successSymbolPath.quadTo(contentRect.left + sideLength * 0.44f, contentRect.top + sideLength * 0.68f
-                , contentRect.left + sideLength * 0.73f, contentRect.top + sideLength * 0.35f);
-
-        Paint.FontMetricsInt fontMetrics = numberPaint.getFontMetricsInt();
-        baseLineY = (height - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+        ComputeUtil.computeCircleSucSymbolPath(contentRect, sideLength, successSymbolPath);
 
         //计算X号Path
         failedSymbolPath1.reset();
         failedSymbolPath2.reset();
-        float padding = sideLength * 0.3f;
-        failedSymbolPath1.moveTo(contentRect.left + padding, contentRect.top + padding);
-        failedSymbolPath1.quadTo(contentRect.left + padding, contentRect.top + padding
-                , contentRect.right - padding, contentRect.bottom - padding);
 
-        failedSymbolPath2.moveTo(contentRect.right - padding, contentRect.top + padding);
-        failedSymbolPath2.quadTo(contentRect.right - padding, contentRect.top + padding
-                , contentRect.left + padding, contentRect.bottom - padding);
+        ComputeUtil.computeCircleFailedSymbolPath(contentRect,sideLength,failedSymbolPath1,failedSymbolPath2);
+
+        Paint.FontMetricsInt fontMetrics = numberPaint.getFontMetricsInt();
+        baseLineY = (height - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
     }
 
 
