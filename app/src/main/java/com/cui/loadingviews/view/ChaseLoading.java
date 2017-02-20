@@ -8,7 +8,10 @@ import android.graphics.Canvas;
  */
 
 public class ChaseLoading extends Base {
+
+
     //TODO 将ZFBLoading 整合到这里
+
 
     @Override
     public void setUp(int width, int height) {
