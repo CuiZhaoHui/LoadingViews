@@ -1,10 +1,14 @@
 # LoadingViews
 ##简单实现各种加载动画。
-- 类似支付宝 支付时Loading动画
+- 类似支付宝 支付时Loading动画（ChaseLoad）
 
-![alt tag](https://github.com/CuiZhaoHui/LoadingViews/raw/master/screenshots/zfb_loading.gif)
+![](https://github.com/CuiZhaoHui/LoadingViews/blob/master/screenshots/chase_load.gif)
 
-- 逐步添加...
+- NumberLoad
+
+![](https://github.com/CuiZhaoHui/LoadingViews/blob/master/screenshots/number_load.gif)
+
+- Will add soon...
 
 ## License
 
