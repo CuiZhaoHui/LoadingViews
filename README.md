@@ -1,6 +1,6 @@
 # LoadingViews
 ##简单实现各种加载动画。
-- 类似支付宝 支付时Loading动画（ChaseLoad）
+- ChaseLoad
 
 ![](https://github.com/CuiZhaoHui/LoadingViews/blob/master/screenshots/chase_load.gif)
 
